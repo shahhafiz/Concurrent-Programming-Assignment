@@ -1,13 +1,5 @@
-//List of methods
-//public patient
-
 package concurrentprogrammingassignment;
 // @author Shah
-
-import static java.lang.Thread.sleep;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 
 public class Doctor {
     String name;
