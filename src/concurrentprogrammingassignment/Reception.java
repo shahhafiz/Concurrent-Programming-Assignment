@@ -15,7 +15,7 @@ public class Reception {
         this.cwl = cwl;
     }
 
-    synchronized public void AssignPatientToDoctor(Patient patient) {
+    synchronized public void assignPatientToDoctor(Patient patient) {
         try {
             Doctor docWithLeastPatient = findDoctorWithLeastPatient();
             if (docWithLeastPatient.waitingList.getSize() == 3 || cwl.getSize() != 0) {
@@ -49,12 +49,15 @@ public class Reception {
         return d;
     }
     
-    boolean stopWorking = false;
+    volatile boolean stopWorking = false;
     public void startConsultation(Doctor d){
         while(!stopWorking){
-            while(d.waitingList.getSize() == 0){
+            while(d.waitingList.getSize() == 0 && stopWorking == false){
 //                System.out.println(d.name+": No patient in waiting list");
                 ListNotEmptyAwait();
+            }
+            if(stopWorking) { 
+                break;
             }
             Patient patient = d.selectPatient();
             // System.out.println(d.name + " meeting " + patient.name +" - "+System.currentTimeMillis());
@@ -64,11 +67,12 @@ public class Reception {
             d.waitingList.removePatient(patient);
             // System.out.println(d.name+" and "+patient.name+" session has ended - "+System.currentTimeMillis());
             System.out.println(d.name+" and "+patient.name+" session has ended,("+d.patientMetCounter+")");
-            DoctorListHasVacancy(d);
+            if(d.patientMetCounter == 8) doctorTakesBreak(d);
+            doctorListHasVacancy(d);
         }
     }
     
-    public void DoctorListHasVacancy(Doctor d){
+    public void doctorListHasVacancy(Doctor d){
         if(cwl.getSize() != 0){
             Patient patient = cwl.list.remove(0);
             // System.out.println(patient.name+" from cwl, assigned to "+docWithLeastPatient.name +" - "+System.currentTimeMillis());
@@ -78,6 +82,13 @@ public class Reception {
         } else {
             System.out.println("Common waiting list is empty");
         }
+    }
+    
+    synchronized public void doctorTakesBreak(Doctor d){
+        try {
+            System.out.println("### "+d.name + " take 15 minutes break ###");
+            wait(15);
+        } catch (InterruptedException ex) {}
     }
     
     public void ListNotEmptyAwait(){
@@ -92,6 +103,12 @@ public class Reception {
         try {
             wait(t);
         } catch (InterruptedException ex) {} 
+    }
+    
+    public void closeReception(){
+        System.out.println("Close reception");
+        stopWorking = true;
+        ListNotEmptySignall();
     }
 }
 
