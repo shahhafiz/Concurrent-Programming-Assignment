@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 //  @author Shah
 public class ConcurrentProgrammingAssignment {
     public static void main(String[] args) {
-//        Patient patientArr[] = new Patient[35];
         CommonWaitingList commonWaitingList = new CommonWaitingList();
         Patient patientArr[] = new Patient[150];
 
@@ -50,6 +49,27 @@ public class ConcurrentProgrammingAssignment {
         for(Patient patient : patientArr){
             executor2.execute(new AssignPatientToDoctor(reception, patient));
         }
+        executor2.execute(new CloseReception(reception));
+        
+        executor1.shutdown();
+        executor2.shutdown();
+    }
+}
+
+class CloseReception implements Runnable{
+    Reception reception;
+    public CloseReception(Reception r) {
+        reception = r;
+    }
+    
+    @Override
+    synchronized public void run(){
+        try {
+            sleep(3000);
+            reception.closeReception();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(CloseReception.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
 
@@ -66,7 +86,7 @@ class AssignPatientToDoctor implements Runnable {
     public void run() {
         try {
             Thread.sleep(patient.arrivalTime);
-            reception.AssignPatientToDoctor(patient);
+            reception.assignPatientToDoctor(patient);
         } catch (InterruptedException ex) {
             Logger.getLogger(AssignPatientToDoctor.class.getName()).log(Level.SEVERE, null, ex);
         }
