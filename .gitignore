@@ -1,4 +1,4 @@
 /dist/
 /build/
 .vscode/launch.json
-nbproject/private/private.xml
+/nbproject/private/private.xml
