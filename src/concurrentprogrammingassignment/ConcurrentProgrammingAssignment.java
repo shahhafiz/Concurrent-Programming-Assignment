@@ -14,19 +14,23 @@ public class ConcurrentProgrammingAssignment {
     public static void main(String[] args) {
         CommonWaitingList commonWaitingList = new CommonWaitingList();
         Patient patientArr[] = new Patient[150];
-
-        Doctor doctorArr[] = { new Doctor("Doctor 1"), new Doctor("Doctor 2"), new Doctor("Doctor 3"),
-//                        new Doctor("Doctor 4"), new Doctor("Doctor 5"), new Doctor("Doctor 6"), new Doctor("Doctor 7"),
-//                        new Doctor("Doctor 8"), new Doctor("Doctor 9"), new Doctor("Doctor 10") 
-        };
+        Doctor doctorArr[] = new Doctor[3];
 
         try {
             File file = new File("input.txt");
             Scanner sc = new Scanner(file);
+            
             int counter = 0;
-
-            sc.nextLine(); // skip line 1
+            String doctorsFromInputFile = sc.nextLine(); 
+            String doctorsData[] = doctorsFromInputFile.split(" ");
+            for(String doctor : doctorsData){
+                doctorArr[counter] = new Doctor("Doctor "+doctor);
+                counter++;
+            }
+            
             sc.nextLine(); // skip line 2
+            
+            counter = 0;
             while (sc.hasNextLine()) {
                 String line = sc.nextLine();
                 String data[] = line.split(" ");
