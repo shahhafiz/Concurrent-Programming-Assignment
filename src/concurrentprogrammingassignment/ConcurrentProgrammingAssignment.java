@@ -3,6 +3,7 @@ package concurrentprogrammingassignment;
 import java.io.File;
 import java.io.FileNotFoundException;
 import static java.lang.Thread.sleep;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -13,46 +14,44 @@ import java.util.logging.Logger;
 public class ConcurrentProgrammingAssignment {
     public static void main(String[] args) {
         CommonWaitingList commonWaitingList = new CommonWaitingList();
-        Patient patientArr[] = new Patient[150];
-        Doctor doctorArr[] = new Doctor[3];
+        ArrayList<Patient> patientList = new ArrayList<>();
+        ArrayList<Doctor> doctorList = new ArrayList<>();
 
         try {
             File file = new File("input.txt");
             Scanner sc = new Scanner(file);
             
-            int counter = 0;
             String doctorsFromInputFile = sc.nextLine(); 
             String doctorsData[] = doctorsFromInputFile.split(" ");
             for(String doctor : doctorsData){
-                doctorArr[counter] = new Doctor("Doctor "+doctor);
-                counter++;
+                doctorList.add(new Doctor("Doctor "+doctor));
             }
             
             sc.nextLine(); // skip line 2
             
-            counter = 0;
             while (sc.hasNextLine()) {
                 String line = sc.nextLine();
                 String data[] = line.split(" ");
-                patientArr[counter] = new Patient(data[0], Integer.parseInt(data[1]), Integer.parseInt(data[2]));
-                counter++;
+                patientList.add(new Patient(data[0], Integer.parseInt(data[1]), Integer.parseInt(data[2])));
             }
             sc.close();
         } catch (FileNotFoundException | NumberFormatException e) {
             System.out.println(e);
         }
 
+        Doctor doctorArr[] = new Doctor[doctorList.size()];
+        doctorArr = doctorList.toArray(doctorArr);
         Reception reception = new Reception(doctorArr, commonWaitingList);
         
         ExecutorService executor1 = Executors.newFixedThreadPool(10);
-        for(Doctor doctor : doctorArr){
+        doctorList.forEach(doctor -> {
             executor1.execute(new StartConsultation(doctor, reception));
-        }
+        });
         
         ExecutorService executor2 = Executors.newFixedThreadPool(10);
-        for(Patient patient : patientArr){
+        patientList.forEach(patient -> {
             executor2.execute(new AssignPatientToDoctor(reception, patient));
-        }
+        });
         executor2.execute(new CloseReception(reception));
         
         executor1.shutdown();
