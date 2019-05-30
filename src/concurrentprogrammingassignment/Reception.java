@@ -4,7 +4,23 @@ package concurrentprogrammingassignment;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+
+
 public class Reception {
+    
+    //Added Colours
+    public static final String ANSI_RESET = "\u001B[0m";
+public static final String ANSI_BLACK = "\u001B[30m";
+public static final String ANSI_RED = "\u001B[31m";
+public static final String ANSI_GREEN = "\u001B[32m";
+public static final String ANSI_YELLOW = "\u001B[33m";
+public static final String ANSI_BLUE = "\u001B[34m";
+public static final String ANSI_PURPLE = "\u001B[35m";
+public static final String ANSI_CYAN = "\u001B[36m";
+public static final String ANSI_WHITE = "\u001B[37m";
+    //End of Added Colours
+    
+
     Doctor doctors[];
     CommonWaitingList cwl;
     ReentrantLock lock = new ReentrantLock();
@@ -20,10 +36,15 @@ public class Reception {
             Doctor docWithLeastPatient = findDoctorWithLeastPatient();
             if (docWithLeastPatient.waitingList.getSize() == 3 || cwl.getSize() != 0) {
                 cwl.addPatient(patient);
-                System.out.println("All doctors are occupied. Adding " + patient.name + " to common waiting list");
+                //Added ANSI_RED
+                System.out.print(ANSI_RED+"\nAll doctors are occupied. Adding " + patient.name + " to common waiting list -->" +ANSI_RESET);
+                //Added cwl.printPatients
+                cwl.printPatients();
+                
+               
             } else {
-                // System.out.println(patient.name+" arrived, assigned to "+docWithLeastPatient.name +" - "+System.currentTimeMillis());
-               System.out.println(patient.name+" arrived, assigned to "+docWithLeastPatient.name);
+                //Added ANSI_BLACK
+               System.out.println(ANSI_BLACK+patient.name+" arrived, assigned to "+docWithLeastPatient.name);
                docWithLeastPatient.addPatient(patient);
                ListNotEmptySignall();
             }
@@ -61,12 +82,16 @@ public class Reception {
             }
             Patient patient = d.selectPatient();
             // System.out.println(d.name + " meeting " + patient.name +" - "+System.currentTimeMillis());
-            System.out.println(d.name + " meeting " + patient.name);
+            
+            //Added ANSI_BLUE
+            System.out.println(ANSI_BLUE+d.name + " meeting " + patient.name);
             waittt(patient.consultationTime);
             d.patientMetCounter++;
             d.waitingList.removePatient(patient);
             // System.out.println(d.name+" and "+patient.name+" session has ended - "+System.currentTimeMillis());
-            System.out.println(d.name+" and "+patient.name+" session has ended,("+d.patientMetCounter+")");
+            
+            //Added ANSI_GREEN
+            System.out.println(ANSI_GREEN+(d.name+" and "+patient.name+" session has ended,("+d.patientMetCounter+")"));
             if(d.patientMetCounter == 8) doctorTakesBreak(d);
             doctorListHasVacancy(d);
         }
@@ -78,7 +103,9 @@ public class Reception {
             // System.out.println(patient.name+" from cwl, assigned to "+docWithLeastPatient.name +" - "+System.currentTimeMillis());
             cwl.removePatient(patient);
             d.addPatient(patient);
-            System.out.println(patient.name+" from cwl, assigned to "+d.name);
+            
+            //Added ANSI_PURPLE
+            System.out.println(ANSI_PURPLE+patient.name+" from cwl, assigned to "+d.name);
         } else {
 //            System.out.println("Common waiting list is empty");
         }
@@ -86,7 +113,11 @@ public class Reception {
     
     synchronized public void doctorTakesBreak(Doctor d){
         try {
-            System.out.println("### "+d.name + " take 15 minutes break ###");
+            //Added ANSI_PURPLE and Take a break notification
+            System.out.println(ANSI_PURPLE+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            System.out.println(ANSI_PURPLE+"### "+d.name + " take 15 minutes break ###");
+            System.out.println(ANSI_PURPLE+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            //End of Added ANSI_PURPLE and Take a break notification
             wait(15);
         } catch (InterruptedException ex) {}
     }
@@ -106,7 +137,8 @@ public class Reception {
     }
     
    public void closeReception(){
-        System.out.println("Close reception");
+       
+        System.out.println(ANSI_RED+"Close reception");
         stopWorking = true;
         ListNotEmptySignall();
         
