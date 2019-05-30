@@ -26,6 +26,8 @@ public class ConcurrentProgrammingAssignment {
                 case 1 : fileName = "case1.txt"; break;
                 case 2 : fileName = "case2.txt"; break;
                 case 3 : fileName = "case3.txt"; break;
+                case 4 : fileName = "case3.txt"; break;
+                case 5 : fileName = "case3.txt"; break;
                 default : fileName = "case1.txt"; break;
             }
             File file = new File(fileName);
