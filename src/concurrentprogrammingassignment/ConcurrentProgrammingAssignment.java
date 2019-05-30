@@ -12,30 +12,39 @@ import java.util.logging.Logger;
 
 //  @author Shah
 public class ConcurrentProgrammingAssignment {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
         CommonWaitingList commonWaitingList = new CommonWaitingList();
         ArrayList<Patient> patientList = new ArrayList<>();
         ArrayList<Doctor> doctorList = new ArrayList<>();
 
         try {
-            File file = new File("input.txt");
-            Scanner sc = new Scanner(file);
-            
-            String doctorsFromInputFile = sc.nextLine(); 
+            System.out.println("Select input file");
+            Scanner sc1 = new Scanner(System.in);
+            int input = sc1.nextInt();
+            String fileName = "";
+            switch(input){
+                case 1 : fileName = "case1.txt"; break;
+                case 2 : fileName = "case2.txt"; break;
+                case 3 : fileName = "case3.txt"; break;
+                default : fileName = "case1.txt"; break;
+            }
+            File file = new File(fileName);
+            Scanner sc2 = new Scanner(file);
+            String doctorsFromInputFile = sc2.nextLine(); 
             String doctorsData[] = doctorsFromInputFile.split(" ");
             for(String doctor : doctorsData){
                 doctorList.add(new Doctor("Doctor "+doctor));
             }
             
-            sc.nextLine(); // skip line 2
+            sc2.nextLine(); // skip line 2
             
-            while (sc.hasNextLine()) {
-                String line = sc.nextLine();
+            while (sc2.hasNextLine()) {
+                String line = sc2.nextLine();
                 String data[] = line.split(" ");
                 patientList.add(new Patient(data[0], Integer.parseInt(data[1]), Integer.parseInt(data[2])));
             }
-            sc.close();
-        } catch (FileNotFoundException | NumberFormatException e) {
+            sc2.close();
+        } catch (NumberFormatException e) {
             System.out.println(e);
         }
 
