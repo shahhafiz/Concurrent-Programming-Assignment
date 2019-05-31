@@ -25,11 +25,16 @@ public class List {
 //        System.out.println("Remove "+p.name+" from waiting list");
         list.remove(p);
     }
+    
+    public void addPatient(Patient p) {
+        list.add(p);
+    }
 }
 
 class WaitingList extends List {
     final int CAPACITY = 3;
 
+    @Override
     public void addPatient(Patient p) {
         if (list.size() < CAPACITY) {
             list.add(p);
@@ -38,14 +43,10 @@ class WaitingList extends List {
 }
 
 class CommonWaitingList extends List {
-    public void addPatient(Patient p) {
-        list.add(p);
-    }
+    
 }
 
 class AllPatientList extends List {
-    public void addPatient(Patient p) {
-        list.add(p);
-    }
+    
 }
 
