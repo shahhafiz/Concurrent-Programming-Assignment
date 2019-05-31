@@ -3,7 +3,6 @@ package concurrentprogrammingassignment;
 
 public class Doctor {
     String name;
-    Boolean stopWorking = false;
     WaitingList waitingList = new WaitingList();
     AllPatientList apl = new AllPatientList();
     int patientMetCounter = 0;
